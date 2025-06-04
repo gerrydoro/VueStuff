@@ -15,8 +15,8 @@ const taskList = ref([
 </script>
 <template>
 
-  <Table :taskList="taskList" :showDone="false"></Table>
-  <Table :taskList="taskList" :showDone="true"></Table>
+  <Table :taskList="taskList.filter((x) => !x.done)" :showDone="false"></Table>
+  <Table :taskList="taskList.filter((x) => x.done)" :showDone="true"></Table>
 
 </template>
 <style scoped>
