@@ -8,7 +8,7 @@ const props = defineProps<{
 
 </script>
 <template>
-    <tr>
+    <tr v-show="(item.done && props.showDone) || (!props.showDone && !item.done)">
         <td :class="{ 'st': item.done }">{{ item.index }}</td>
         <td :class="{ 'st': item.done }">{{ item.title }}</td>
         <td :class="{ 'st': item.done }">{{ item.user }}</td>
