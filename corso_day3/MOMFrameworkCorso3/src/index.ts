@@ -202,6 +202,13 @@ export interface Machine {
   HasSDAManagement: boolean;
   FGManagementInAlarm: boolean;
 }
+
+export interface Profile {
+  id: number;
+  username: string;
+  machines: string[];
+}
+
 /**
  * @deprecated The method should not be used
  */
@@ -288,4 +295,34 @@ export async function Logout(): Promise<ApiResponse<{}>> {
   return result;
 }
 
+export async function Machines(machineIds: number[]): Promise<ApiResponse<{}>> {
+  let result = <ApiResponse<{}>>{}
+  let loading = false
+  let params = {
+    "machineIds": machineIds,
+  }
+  // result = await axios.post("http://10.10.55.140/Secondary/GetWorkcenterStatus", params)
+  loading = true
+  let response = await axios.post("http://10.90.24.52:3000/machines", params);
+  console.log("response : ", response.data);
+  result.data = response.data;
+  result.isSuccess = response.status == 200;
+  result.status = response.status;
+  result.statusText = response.statusText;
+  return result;
+}
+
+export async function Me(): Promise<ApiResponse<Profile>> {
+  let result = <ApiResponse<Profile>>{}
+  let loading = false
+
+  loading = true
+  let response = await axios.post("http://10.90.24.52:3000/me");
+  console.log("response : ", response.data);
+  result.data = response.data;
+  result.isSuccess = response.status == 200;
+  result.status = response.status;
+  result.statusText = response.statusText;
+  return result;
+}
 
