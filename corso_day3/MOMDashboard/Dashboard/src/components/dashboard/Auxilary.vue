@@ -1,9 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
-<script setup lang="ts">
-
-</script>
+<script setup lang="ts"></script>
 <template>
-  <div class="card newCard" style="width: 18rem;">
+  <div class="card newCard" style="width: 18rem">
     <ul class="list-group list-group-flush">
       <li class="list-group-item">An item</li>
       <li class="list-group-item">A second item</li>
@@ -12,7 +10,7 @@
   </div>
 </template>
 <style scoped>
-.newCard{
+.newCard {
   margin: 1rem;
   height: 85vh;
 }

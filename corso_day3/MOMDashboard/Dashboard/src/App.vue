@@ -1,23 +1,22 @@
 <script setup lang="ts">
-import Skeleton from './components/Skeleton.vue';
+import Skeleton from './components/Skeleton.vue'
 </script>
 
 <template>
-    <Skeleton>
-      <template #nav>
-        <li class="nav-item">
-          <RouterLink class="nav-link active" aria-current="page" to="/">Home</RouterLink>
-        </li>
+  <Skeleton>
+    <template #nav>
+      <li class="nav-item">
+        <RouterLink class="nav-link active" aria-current="page" to="/">Home</RouterLink>
+      </li>
 
-        <li class="nav-item">
-          <RouterLink class="nav-link active" aria-current="page" to="/about">About</RouterLink>
-        </li>
-
-      </template>
-      <template #body>
-        <RouterView></RouterView>
-      </template>
-    </Skeleton>
+      <li class="nav-item">
+        <RouterLink class="nav-link active" aria-current="page" to="/about">About</RouterLink>
+      </li>
+    </template>
+    <template #body>
+      <RouterView></RouterView>
+    </template>
+  </Skeleton>
 </template>
 
 <style scoped>

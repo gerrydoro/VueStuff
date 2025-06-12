@@ -13,15 +13,21 @@ describe('HelloWorld', () => {
 describe('TheWelcome', () => {
   it('renders properly', () => {
     const wrapper = mount(HelloWorld, { props: { msg: 'Hello Vitest' } })
-    console.log(wrapper.findAll("h1").find((x) => {
-      return x.attributes().id == "giulio";
-    }));
-    console.log(wrapper.findAll("h1").find((x) => {
-      return x.attributes().id == "ciccio";
-    })?.element.textContent);
+    console.log(
+      wrapper.findAll('h1').find((x) => {
+        return x.attributes().id == 'giulio'
+      }),
+    )
+    console.log(
+      wrapper.findAll('h1').find((x) => {
+        return x.attributes().id == 'ciccio'
+      })?.element.textContent,
+    )
 
-    expect(wrapper.findAll("h1").find((x) => {
-      return x.attributes().id == "ciccio";
-    })?.element.textContent).toContain('giulio')
+    expect(
+      wrapper.findAll('h1').find((x) => {
+        return x.attributes().id == 'ciccio'
+      })?.element.textContent,
+    ).toContain('giulio')
   })
 })
