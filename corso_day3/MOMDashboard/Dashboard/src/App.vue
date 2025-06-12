@@ -2,14 +2,26 @@
 import { ref } from 'vue';
 import Skeleton from './components/Skeleton.vue'
 import { useAuthStore } from './stores/AuthStore';
+// import type { useRoute } from 'vue-router';
+
+
+const machineIds = ref(['1', '2', '3']);
+
+// const = useRoute();
 
 </script>
 
 <template>
   <Skeleton>
     <template #nav>
-      <li class="nav-item">
-        <RouterLink class="nav-link active" aria-current="page" to="/">Home</RouterLink>
+      <li v-for="machineId in machineIds" :key="machineId" class="nav-item">
+        <RouterLink class="nav-link" :class="{
+          'active':machineId == $route.params.machineId,
+          'disabled':machineId !== $route.params.machineId
+          }" aria-current="page"
+          :to="{ name: 'home', params: { machineId } }">
+          Machine {{ machineId }}
+        </RouterLink>
       </li>
 
       <li class="nav-item">

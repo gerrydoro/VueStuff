@@ -2,7 +2,11 @@
 import Auxilary from '@/components/dashboard/Auxilary.vue'
 import Template from '@/components/dashboard/Template.vue'
 import Content from '@/components/dashboard/Content.vue'
-import GetWorkCenterStatus from 'momframeworkcorso3'
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+route.params.machineId = '12345'; // Example of setting a machineId, replace with actual logic if needed
+
 </script>
 
 <template>
