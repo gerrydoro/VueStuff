@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import Skeleton from './components/Skeleton.vue'
+import { useAuthStore } from './stores/AuthStore';
+
 </script>
 
 <template>
@@ -14,7 +17,7 @@ import Skeleton from './components/Skeleton.vue'
       </li>
 
       <li class="nav-item">
-        <button>Login</button>
+        <button @click="useAuthStore().login('admin', 'password')">Login</button>
       </li>
     </template>
     <template #body>

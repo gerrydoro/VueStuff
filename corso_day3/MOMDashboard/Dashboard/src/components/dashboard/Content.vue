@@ -1,5 +1,8 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts"></script>
+
+
+
 <template>
   <div class="card newCard">
     <ul class="list-group list-group-flush">
