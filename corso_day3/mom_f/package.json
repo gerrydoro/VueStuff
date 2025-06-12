@@ -1,9 +1,12 @@
 {
-  "name": "mom_f",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "name": "momframeworkcorso3",
+  "version": "1.0.3",
+  "main": "./dist/index.js",
+  "types": "./dist/app.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/app.js"
+    }
   },
   "keywords": [],
   "author": "",
