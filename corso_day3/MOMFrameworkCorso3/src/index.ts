@@ -234,7 +234,8 @@ export async function GetWorkCenterStatus(secondaryUnitIds: number[]): Promise<A
   }
   // result = await axios.post("http://10.10.55.140/Secondary/GetWorkcenterStatus", params)
   loading = true
-  let response = await axios.post("http://10.10.55.140/Secondary/GetWorkcenterStatus", params);
+
+  let response = await axios.post("http://10.90.24.69/Secondary/GetWorkcenterStatus", params);
   console.log("response : ", response.data);
   result.data = response.data;
   result.isSuccess = response.status == 200;
@@ -254,7 +255,7 @@ export async function Login(username: string, password: string): Promise<ApiResp
   }
   // result = await axios.post("http://10.10.55.140/Secondary/GetWorkcenterStatus", params)
   loading = true
-  let response = await axios.post("http://10.90.24.52:3000/login", params);
+  let response = await axios.post("http://10.90.24.52/login", params);
   console.log("response : ", response.data);
   result.data = response.data;
   result.isSuccess = response.status == 200;
@@ -272,7 +273,7 @@ export async function Refresh(refreshToken: string): Promise<ApiResponse<{ acces
   }
   // result = await axios.post("http://10.10.55.140/Secondary/GetWorkcenterStatus", params)
   loading = true
-  let response = await axios.post("http://10.90.24.52:3000/refresh", params);
+  let response = await axios.post("http://10.90.24.52/refresh", params);
   console.log("response : ", response.data);
   result.data = response.data;
   result.isSuccess = response.status == 200;

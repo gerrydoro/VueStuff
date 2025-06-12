@@ -1,8 +1,10 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
-export const useUserPrefsStore = defineStore('userPrefs', () => {
 
+
+export const useUserPrefsStore = defineStore('userPrefs', () => {
+  const clock = ref(0);
   const machineId = ref(localStorage.getItem('machineId'))
   const lang = ref(localStorage.getItem('lang'))
 
@@ -11,5 +13,5 @@ export const useUserPrefsStore = defineStore('userPrefs', () => {
     localStorage.setItem('lang', lang);
   }
 
-  return { machineId, lang, setPrefs }
+  return { machineId, lang, setPrefs, clock }
 })

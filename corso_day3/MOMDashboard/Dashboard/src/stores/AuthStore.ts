@@ -1,7 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { Login } from 'momframeworkcorso3'
-import router from '@/router'
 
 
 export const useAuthStore = defineStore('auth', () => {
@@ -14,22 +13,25 @@ export const useAuthStore = defineStore('auth', () => {
     return accessToken.value !== null && accessToken.value !== undefined;
   });
 
-  function login(user_name: string, password: string) {
-    username.value = user_name
-    localStorage.setItem('username', username.value);
+  async function login(user_name: string, password: string) {
 
-    Login(user_name, password).then((result) => {
-      accessToken.value = result.data.accessToken;
-      refreshToken.value = result.data.refreshToken;
+    // username.value = user_name
+    // localStorage.setItem('username', username.value);
 
-      localStorage.setItem('accessToken', accessToken.value);
-      localStorage.setItem('refreshToken', refreshToken.value);
+    // // const result = await Login(user_name, password);
 
-    }).catch(() => {
-      console.log("Login failed for user", user_name, "and pass", "🙄")
-    }).finally(() => {
-      console.log("Login method is over, see ya")
-    })
+    // // Login(user_name, password).then((result) => {
+    // // }).catch(() => {
+    // //   console.log("Login failed for user", user_name, "and pass", "🙄")
+    // // }).finally(() => {
+    // //   console.log("Login method is over, see ya")
+    // // })
+
+    // accessToken.value = result.data.accessToken;
+    // refreshToken.value = result.data.refreshToken;
+
+    // localStorage.setItem('accessToken', accessToken.value);
+    // localStorage.setItem('refreshToken', refreshToken.value);
   }
 
   return { accessToken, refreshToken, username, login, isAuthenticated }
