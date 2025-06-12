@@ -12,6 +12,10 @@ import Skeleton from './components/Skeleton.vue'
       <li class="nav-item">
         <RouterLink class="nav-link active" aria-current="page" to="/about">About</RouterLink>
       </li>
+
+      <li class="nav-item">
+        <button>Login</button>
+      </li>
     </template>
     <template #body>
       <RouterView></RouterView>
