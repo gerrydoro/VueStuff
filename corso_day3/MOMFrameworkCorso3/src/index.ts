@@ -1,5 +1,11 @@
 import axios from "axios";
 
+
+export class KTEWorker {
+  worker: Worker | null = null;
+  methods: number[] = []
+}
+
 // #region Models
 export interface Material {
   PatternDescription: string | null;
@@ -203,7 +209,7 @@ export interface Machine {
   FGManagementInAlarm: boolean;
 }
 
-export interface GetWorkCenterStatusResult{
+export interface GetWorkCenterStatusResult {
   GetWorkCenterStatusResult: Machine[];
 }
 
@@ -228,9 +234,154 @@ export interface ApiResponse<T> {
 }
 //#endregion
 
+//#region Locations Classes
+
+interface Pallet {
+  ConsumptionStorageUnit: StorageUnit | null;
+  ExpirationDateUI: number;
+  MaterialId: string;
+  QuantityBUoM: number;
+  WO: string;
+  DeliveryId: number;
+  ProductionDateTimeUI: number;
+  SublotAtEOLUIStatus: number;
+  IsPostToSAPEnabled: boolean;
+  CorporateRepositoryRequestStatus: number;
+  QuantityLUoM: number;
+  PalletGroupId: number;
+  LUoMDecimalPlaces: number;
+  HeightId: number;
+  LastKnownStorageUnit: any;
+  IsFGTracked: boolean;
+  SublotId: number;
+  OutboundSAPDocumentItem: number;
+  StockType: number;
+  Status: number;
+  CreatedAtWorkCenter: any;
+  Counter: number;
+  CreationStorageUnit: StorageUnit | null;
+  ParentSublotId: any;
+  SublotAtReworkAreaUIStatus: number;
+  ConsumptionStorageUnitId: any;
+  StorageUnitId: number;
+  BatchStatus: number;
+  ShelfLifeWhenOpened: any;
+  PalletTypeId: number;
+  BUoM: string;
+  IsHeavy: boolean;
+  SSCC: string;
+  Remarks: any;
+  RefPalletType: any;
+  Type: number;
+  IsRejectedByCentralWrapper: boolean;
+  RequestStatus: number;
+  ContainedMasterCases: any;
+  OutboundSAPDocumentYD: string;
+  RefHeight: any;
+  MarkedAsDeletable: boolean;
+  CreatedBy: any;
+  RefCarrier: any;
+  CreationDateTimeUI: number;
+  RemarksUI: any;
+  LUoM: string;
+  CreationStorageUnitId: any;
+  PendingSplitAndMergeInstruction: boolean;
+  MovementPhase: number;
+  OutboundSAPDocumentNumber: any;
+  EndOfAgingDateTimeUI: any;
+  ConsumptionDateTimeUI: any;
+  BatchNumber: any;
+  LastActingPerson: any;
+  Material: Material;
+  ParentStorageUnit: StorageUnit | null;
+  PlantCode: string;
+  IsAggregationCompleted: boolean;
+  LastModifiedDateTimeUI: number;
+  LastKnownStorageUnitId: number;
+  DefectedMasterCases: any;
+  ReworkActionNeeded: number;
+  EndOfLineActionNeeded: number;
+  IsRestricted: boolean;
+  BUoMDecimalPlaces: number;
+}
+
+
+interface StorageUnit {
+  MaxPalletCount: number;
+  IsAutomaticReorderOn: boolean;
+  IsFull: boolean;
+  EquipmentCode: string;
+  EquipmentId: number;
+  RackLevelNumber: number;
+  MaxSublotCount: number;
+  IsHomogeneous: boolean;
+  StorageZoneId: number;
+  PrinterId: number;
+  IsReservedByMaterial: boolean;
+  StartProcessing: any;
+  AllowedRestrictionCodes: any;
+  StorageUnitSignature: string;
+  IsUnderStockCount: boolean;
+  RackColumnNumber: number;
+  IsSmallBinFull: boolean;
+  AllowedMaterialIds: any[];
+  StorageLocationGroupDescription: any;
+  IsUnloading: boolean;
+  SmallBinPositionInPallet: number;
+  IsReservedByBatch: boolean;
+  ParentStorageZone: any;
+  RackNumber: number;
+  RampNumber: number;
+  Status: number;
+  AllowedSublotStatuses: number[];
+  StorageBayId: number;
+  AllowedPalletTypeIds: any[];
+  IsStorageUnitSizeExtendable: boolean;
+  SAPLocation: string;
+  ParentStorageZoneCode: any;
+  Description: string;
+  DefaultReorderQuantityInLUoM: number;
+  StorageLocationGroup: any;
+  LocationCode: string;
+  AllowedMaterialGroups: any[];
+  AllowedPhantomMaterialGroups: any[];
+  ChamberState: number;
+  TimeframeInDaysToStoreProduction: number;
+  LocationSignature: string;
+  AlleyNumber: number;
+  AllowedCarrierTypes: any;
+  HeightId: any;
+  IsExchangeByBatchAllowed: boolean;
+  OnTheFlyShipment: boolean;
+  ReservedMaterialId: any;
+  ReorderPoint: number;
+  RefStorageBay: any;
+}
+
+interface GetWorkCenterSDAStatusResultItem {
+  SecondaryUnitIds: number[];
+  Pallets: Pallet[];
+  SDAType: number;
+  IsDeliveryBlockedInSDA: boolean;
+  WorkCenterCode: string | null;
+  SDAStatus: number;
+  SDAOutTaskUnitId: number;
+  StorageUnit: StorageUnit;
+  SDADirection: number;
+}
+
+interface GetWorkCenterSDAStatusResult {
+  GetWorkCenterSDAStatusResult: GetWorkCenterSDAStatusResultItem[];
+}
+
+
+
+//#endregion
+
+
 //#region Funtions
 // 10.10.55.140
-export async function GetWorkCenterStatus(secondaryUnitIds: number[]): Promise<ApiResponse<GetWorkCenterStatusResult>> {
+export async function GetWorkCenterStatus(secondaryUnitIds: number[], timeOut: number): Promise<ApiResponse<GetWorkCenterStatusResult>> {
   let result = <ApiResponse<GetWorkCenterStatusResult>>{}
   let loading = false
   let params = {
@@ -239,8 +390,17 @@ export async function GetWorkCenterStatus(secondaryUnitIds: number[]): Promise<A
   // result = await axios.post("http://10.10.55.140/Secondary/GetWorkcenterStatus", params)
   loading = true
 
+  // axios.get('/foo/bar', {
+  //   signal: controller.signal
+  // }).then(function (response) {
+  //   //...
+  // });
+  // cancel the request
   let response = await axios.post("http://10.90.24.69/Secondary/GetWorkcenterStatus", params);
-  // console.log("response : ", response.data);
+
+  // , {
+  //   signal: AbortSignal.timeout(timeOut)
+  // }
 
   result.data = response.data;
   result.isSuccess = response.status == 200;
@@ -248,12 +408,32 @@ export async function GetWorkCenterStatus(secondaryUnitIds: number[]): Promise<A
   result.statusText = response.statusText;
   return result;
 }
-
-
-
+// 10.10.55.140
+export async function GetWorkCenterSDAStatus(secondaryUnitIds: number[], timeOut: number): Promise<ApiResponse<GetWorkCenterSDAStatusResult>> {
+  let result = <ApiResponse<GetWorkCenterSDAStatusResult>>{}
+  let loading = false
+  let params = {
+    "secondaryUnitIdsList": [
+      3672,
+      3673,
+      3689
+    ],
+    "isForEmptyPallet": false
+  }
+  loading = true
+  // cancel the request
+  let response = await axios.post("http://10.90.24.69/Secondary/GetWorkCenterSDAStatus", params);
+// , {
+//     signal: AbortSignal.timeout(timeOut)
+//   }
+  result.data = response.data;
+  result.isSuccess = response.status == 200;
+  result.status = response.status;
+  result.statusText = response.statusText;
+  return result;
+}
 
 //#endregion
-
 
 export async function Login(username: string, password: string): Promise<ApiResponse<{ accessToken: string, refreshToken: string }>> {
   let result = <ApiResponse<{ accessToken: string, refreshToken: string }>>{}
