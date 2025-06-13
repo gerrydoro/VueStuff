@@ -5,9 +5,8 @@ import Content from '@/components/dashboard/Content.vue'
 import WorkOrderHeader from '@/components/WorkOrderHeader.vue'
 import { useRoute } from 'vue-router';
 import { onMounted, reactive, ref } from 'vue';
-// import { GetWorkCenterSDAStatus, GetWorkCenterStatus } from 'momframeworkcorso3';
+import { GetWorkCenterSDAStatus, GetWorkCenterStatus } from 'momframeworkcorso3';
 import type { WorkOrder } from 'momframeworkcorso3';
-import { KTEWorker } from 'momframeworkcorso3';
 
 const route = useRoute();
 const machineIds = <number[]>[]
@@ -16,28 +15,70 @@ const workOrderHeader = ref(<WorkOrder>{});
 const nextOrderHeader = reactive(<WorkOrder>{});
 
 const machineIdsOrigin = ref([3672, 3673]);
-const timeOut = 10000; // 5 seconds
+const timeOut = 5000; // 5 seconds
+const timeOut2 = 7000; // 5 seconds
 
-const worker: KTEWorker = new KTEWorker();
+// const worker: KTEWorker = new KTEWorker();
 
 function GetWorkCenterStatusFunction() {
+  GetWorkCenterStatus(machineIds, timeOut).then((data) => {
+    console.time('GetWorkCenterStatus')
+    // Object.assign(workOrderHeader, data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader);
+    // workOrderHeader.value = data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader;
+    Object.assign(nextOrderHeader, data.data.GetWorkCenterStatusResult[0].NextOrderHeader);
+  }).catch((error) => {
+    console.error('Error fetching work center status:', error);
+  }).finally(() => {
+    console.timeEnd('GetWorkCenterStatus')
 
-  setInterval(() => {
-    // console.time('GetWorkCenterStatus cycle')
+    setInterval(() => {
+      console.time('GetWorkCenterStatus cycle')
 
-    worker.GetWorkCenterStatus(machineIds, 2000);
-    console.log('GetWorkCenterStatus called at ', Date.now());
+      GetWorkCenterStatus(machineIds, timeOut).then((data) => {
+        // const randomId = Math.floor(Math.random() * (2 - 0 + 1)) + 0;
+        Object.assign(workOrderHeader, data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader);
+        // workOrderHeader.value = data.data.GetWorkCenterStatusResult[randomId].CurrentOrderHeader;
 
-  }, timeOut + 500);
+        Object.assign(nextOrderHeader, data.data.GetWorkCenterStatusResult[0].NextOrderHeader);
+
+      }).catch((error) => {
+        console.error('Error fetching work center status:', error);
+      }).finally(() => {
+        console.timeEnd('GetWorkCenterStatus cycle')
+      });
+
+    }, timeOut + 500); // Fetch every 5 seconds
+  });
+
 }
 
 function GetWorkCenterSDAStatusFunction() {
-  setInterval(() => {
-    // console.time('GetWorkCenter SDA Status cycle')
+  GetWorkCenterSDAStatus(machineIds, timeOut2).then((data) => {
+    console.time('GetWorkCenter SDA Status')
+    // Object.assign(workOrderHeader, data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader);
+    const prova = data.data.GetWorkCenterSDAStatusResult[0].SecondaryUnitIds;
+    console.log('SDA Status:', prova);
+  }).catch((error) => {
+    console.error('Error fetching work center status:', error);
+  }).finally(() => {
+    console.timeEnd('GetWorkCenter SDA Status')
 
-    worker.GetWorkCenterSDAStatus(machineIdsOrigin.value, 20000);
-    console.log('GetWorkCenterSDAStatus called at ', Date.now());
-  }, 20000 + 500);
+    setInterval(() => {
+      console.time('GetWorkCenter SDA Status cycle')
+
+      GetWorkCenterSDAStatus(machineIdsOrigin.value, timeOut2).then((data) => {
+        const prova = data.data.GetWorkCenterSDAStatusResult[0].SecondaryUnitIds;
+        console.log('SDA Status:', prova);
+
+      }).catch((error) => {
+        console.error('Error fetching work center status:', error);
+      }).finally(() => {
+        console.timeEnd('GetWorkCenter SDA Status cycle')
+      });
+
+    }, timeOut2 + 500); // Fetch every 5 seconds
+  });
+
 }
 
 onMounted(() => {
@@ -48,31 +89,31 @@ onMounted(() => {
 
   GetWorkCenterStatusFunction()
 
-  // GetWorkCenterSDAStatusFunction()
+  GetWorkCenterSDAStatusFunction()
   // worker.onMessageCallback = (data) => console.log('Worker message callback:', data);
 
-  worker.onMessage((data) => {
-    console.log('Worker message:', data)
-    if (data.action === 'GetWorkCenterStatus') {
+  // worker.onMessage((data) => {
+  //   console.log('Worker message:', data)
+  //   if (data.action === 'GetWorkCenterStatus') {
 
-      // // const randomId = Math.floor(Math.random() * (2 - 0 + 1)) + 0;
-      // Object.assign(workOrderHeader, data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader);
-      // // workOrderHeader.value = data.data.GetWorkCenterStatusResult[randomId].CurrentOrderHeader;
+  //     // // const randomId = Math.floor(Math.random() * (2 - 0 + 1)) + 0;
+  //     // Object.assign(workOrderHeader, data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader);
+  //     // // workOrderHeader.value = data.data.GetWorkCenterStatusResult[randomId].CurrentOrderHeader;
 
-      // Object.assign(nextOrderHeader, data.data.GetWorkCenterStatusResult[0].NextOrderHeader);
+  //     // Object.assign(nextOrderHeader, data.data.GetWorkCenterStatusResult[0].NextOrderHeader);
 
 
-      console.log('GetWorkCenterStatus Data:', data);
+  //     console.log('GetWorkCenterStatus Data:', data);
 
-    }
-    // else if (data.action === 'GetWorkCenterSDAStatus') {
-    //   // Handle SDA status data
-    //   const prova = data.data.GetWorkCenterSDAStatusResult[0].SecondaryUnitIds;
+  //   }
+  //   // else if (data.action === 'GetWorkCenterSDAStatus') {
+  //   //   // Handle SDA status data
+  //   //   const prova = data.data.GetWorkCenterSDAStatusResult[0].SecondaryUnitIds;
 
-    //   console.log('SDA Status Data:', data.data.GetWorkCenterSDAStatusResult);
-    //   console.log('Prova:',prova);
-    // }
-  });
+  //   //   console.log('SDA Status Data:', data.data.GetWorkCenterSDAStatusResult);
+  //   //   console.log('Prova:',prova);
+  //   // }
+  // });
 
 });
 
