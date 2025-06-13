@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import Skeleton from './components/Skeleton.vue'
-import { useAuthStore } from './stores/AuthStore';
 // import type { useRoute } from 'vue-router';
 
 const machineIds = ref([3672, 3673]);
@@ -25,7 +24,7 @@ const machineIds = ref([3672, 3673]);
       </li>
 
       <li class="nav-item">
-        <button @click="useAuthStore().login('admin', 'password')">Login</button>
+        <!-- <button @click="useAuthStore().login('admin', 'password')">Login</button> -->
       </li>
     </template>
     <template #body>

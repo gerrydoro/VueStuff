@@ -1,11 +1,5 @@
 import axios from "axios";
 
-
-export class KTEWorker {
-  worker: Worker | null = null;
-  methods: number[] = []
-}
-
 // #region Models
 export interface Material {
   PatternDescription: string | null;
@@ -378,141 +372,181 @@ interface GetWorkCenterSDAStatusResult {
 
 //#endregion
 
+export class KTEWorker {
+  worker: Worker;
+  methods: number[] = []
+  onMessageCallback: (event: MessageEvent) => void = () => { };
 
-//#region Funtions
-// 10.10.55.140
-export async function GetWorkCenterStatus(secondaryUnitIds: number[], timeOut: number): Promise<ApiResponse<GetWorkCenterStatusResult>> {
-  let result = <ApiResponse<GetWorkCenterStatusResult>>{}
-  let loading = false
-  let params = {
-    "secondaryUnitIds": secondaryUnitIds
+  constructor() {
+    this.worker = new Worker(new URL("./workers/Worker.js", import.meta.url), { type: "module" });
+
+    this.worker.onmessage = (event) => {
+
+      this.onMessageCallback?.(event);
+    };
+
   }
-  // result = await axios.post("http://10.10.55.140/Secondary/GetWorkcenterStatus", params)
-  loading = true
 
-  // axios.get('/foo/bar', {
-  //   signal: controller.signal
-  // }).then(function (response) {
-  //   //...
-  // });
-  // cancel the request
-  let response = await axios.post("http://10.90.24.69/Secondary/GetWorkcenterStatus", params);
+  //#region Funtions
+  // 10.10.55.140
+  async GetWorkCenterStatus(secondaryUnitIds: number[], timeOut: number): Promise<ApiResponse<GetWorkCenterStatusResult>> {
+    let result = <ApiResponse<GetWorkCenterStatusResult>>{}
+    let loading = false
+    let params = {
+      "secondaryUnitIds": secondaryUnitIds
+    }
+    // result = await axios.post("http://10.10.55.140/Secondary/GetWorkcenterStatus", params)
+    loading = true
 
-  // , {
-  //   signal: AbortSignal.timeout(timeOut)
-  // }
+    // axios.get('/foo/bar', {
+    //   signal: controller.signal
+    // }).then(function (response) {
+    //   //...
+    // });
+    // cancel the request
 
-  result.data = response.data;
-  result.isSuccess = response.status == 200;
-  result.status = response.status;
-  result.statusText = response.statusText;
-  return result;
-}
-// 10.10.55.140
-export async function GetWorkCenterSDAStatus(secondaryUnitIds: number[], timeOut: number): Promise<ApiResponse<GetWorkCenterSDAStatusResult>> {
-  let result = <ApiResponse<GetWorkCenterSDAStatusResult>>{}
-  let loading = false
-  let params = {
-    "secondaryUnitIdsList": [
-      3672,
-      3673,
-      3689
-    ],
-    "isForEmptyPallet": false
+    this.worker.postMessage({ action: 'testMessage', url : "url" });
+
+    // let response = await axios.post("http://10.90.24.69/Secondary/GetWorkcenterStatus", params,);
+
+    // , {
+    //   signal: AbortSignal.timeout(timeOut)
+    //   signal: controller.signal
+    // }
+
+    // result.data = response.data;
+    // result.isSuccess = response.status == 200;
+    // result.status = response.status;
+    // result.statusText = response.statusText;
+    return result;
   }
-  loading = true
-  // cancel the request
-  let response = await axios.post("http://10.90.24.69/Secondary/GetWorkCenterSDAStatus", params);
-// , {
-//     signal: AbortSignal.timeout(timeOut)
-//   }
-  result.data = response.data;
-  result.isSuccess = response.status == 200;
-  result.status = response.status;
-  result.statusText = response.statusText;
-  return result;
-}
+  // 10.10.55.140
+  async GetWorkCenterSDAStatus(secondaryUnitIds: number[], timeOut: number): Promise<ApiResponse<GetWorkCenterSDAStatusResult>> {
+    let result = <ApiResponse<GetWorkCenterSDAStatusResult>>{}
+    let loading = false
+    let params = {
+      "secondaryUnitIdsList": [
+        3672,
+        3673,
+        3689
+      ],
+      "isForEmptyPallet": false
+    }
+    loading = true
+    // cancel the request
+    this.worker.postMessage({ action: 'testMessage', url : "url" });
 
-//#endregion
-
-export async function Login(username: string, password: string): Promise<ApiResponse<{ accessToken: string, refreshToken: string }>> {
-  let result = <ApiResponse<{ accessToken: string, refreshToken: string }>>{}
-  let loading = false
-  let params = {
-    "username": username,
-    "password": password
+    // let response = await axios.post("http://10.90.24.69/Secondary/GetWorkCenterSDAStatus", params);
+    // , {
+    //     signal: AbortSignal.timeout(timeOut)
+    //   }
+    // result.data = response.data;
+    // result.isSuccess = response.status == 200;
+    // result.status = response.status;
+    // result.statusText = response.statusText;
+    return result;
   }
-  // result = await axios.post("http://10.10.55.140/Secondary/GetWorkcenterStatus", params)
-  loading = true
-  let response = await axios.post("http://10.90.24.52/login", params);
-  console.log("response : ", response.data);
-  result.data = response.data;
-  result.isSuccess = response.status == 200;
-  result.status = response.status;
-  result.statusText = response.statusText;
-  return result;
-}
 
-
-export async function Refresh(refreshToken: string): Promise<ApiResponse<{ accessToken: string }>> {
-  let result = <ApiResponse<{ accessToken: string }>>{}
-  let loading = false
-  let params = {
-    "refreshToken": refreshToken,
+  async Login(username: string, password: string): Promise<ApiResponse<{ accessToken: string, refreshToken: string }>> {
+    let result = <ApiResponse<{ accessToken: string, refreshToken: string }>>{}
+    let loading = false
+    let params = {
+      "username": username,
+      "password": password
+    }
+    // result = await axios.post("http://10.10.55.140/Secondary/GetWorkcenterStatus", params)
+    loading = true
+    let response = await axios.post("http://10.90.24.52/login", params);
+    console.log("response : ", response.data);
+    result.data = response.data;
+    result.isSuccess = response.status == 200;
+    result.status = response.status;
+    result.statusText = response.statusText;
+    return result;
   }
-  // result = await axios.post("http://10.10.55.140/Secondary/GetWorkcenterStatus", params)
-  loading = true
-  let response = await axios.post("http://10.90.24.52/refresh", params);
-  console.log("response : ", response.data);
-  result.data = response.data;
-  result.isSuccess = response.status == 200;
-  result.status = response.status;
-  result.statusText = response.statusText;
-  return result;
-}
 
-export async function Logout(): Promise<ApiResponse<{}>> {
-  let result = <ApiResponse<{}>>{}
-  let loading = false
-  // result = await axios.post("http://10.10.55.140/Secondary/GetWorkcenterStatus", params)
-  loading = true
-  let response = await axios.post("http://10.90.24.52:3000/logout");
-  console.log("response : ", response.data);
-  result.data = response.data; // will be null here
-  result.isSuccess = response.status == 200;
-  result.status = response.status;
-  result.statusText = response.statusText;
-  return result;
-}
-
-export async function Machines(machineIds: number[]): Promise<ApiResponse<{}>> {
-  let result = <ApiResponse<{}>>{}
-  let loading = false
-  let params = {
-    "machineIds": machineIds,
+  async Refresh(refreshToken: string): Promise<ApiResponse<{ accessToken: string }>> {
+    let result = <ApiResponse<{ accessToken: string }>>{}
+    let loading = false
+    let params = {
+      "refreshToken": refreshToken,
+    }
+    // result = await axios.post("http://10.10.55.140/Secondary/GetWorkcenterStatus", params)
+    loading = true
+    let response = await axios.post("http://10.90.24.52/refresh", params);
+    console.log("response : ", response.data);
+    result.data = response.data;
+    result.isSuccess = response.status == 200;
+    result.status = response.status;
+    result.statusText = response.statusText;
+    return result;
   }
-  // result = await axios.post("http://10.10.55.140/Secondary/GetWorkcenterStatus", params)
-  loading = true
-  let response = await axios.post("http://10.90.24.52:3000/machines", params);
-  console.log("response : ", response.data);
-  result.data = response.data;
-  result.isSuccess = response.status == 200;
-  result.status = response.status;
-  result.statusText = response.statusText;
-  return result;
+
+  async Logout(): Promise<ApiResponse<{}>> {
+    let result = <ApiResponse<{}>>{}
+    let loading = false
+    // result = await axios.post("http://10.10.55.140/Secondary/GetWorkcenterStatus", params)
+    loading = true
+    let response = await axios.post("http://10.90.24.52:3000/logout");
+    console.log("response : ", response.data);
+    result.data = response.data; // will be null here
+    result.isSuccess = response.status == 200;
+    result.status = response.status;
+    result.statusText = response.statusText;
+    return result;
+  }
+
+  async Machines(machineIds: number[]): Promise<ApiResponse<{}>> {
+    let result = <ApiResponse<{}>>{}
+    let loading = false
+    let params = {
+      "machineIds": machineIds,
+    }
+    // result = await axios.post("http://10.10.55.140/Secondary/GetWorkcenterStatus", params)
+    loading = true
+    let response = await axios.post("http://10.90.24.52:3000/machines", params);
+    console.log("response : ", response.data);
+    result.data = response.data;
+    result.isSuccess = response.status == 200;
+    result.status = response.status;
+    result.statusText = response.statusText;
+    return result;
+  }
+
+  async Me(): Promise<ApiResponse<Profile>> {
+    let result = <ApiResponse<Profile>>{}
+    let loading = false
+
+    loading = true
+    let response = await axios.post("http://10.90.24.52:3000/me");
+    console.log("response : ", response.data);
+    result.data = response.data;
+    result.isSuccess = response.status == 200;
+    result.status = response.status;
+    result.statusText = response.statusText;
+    return result;
+  }
+
+  //#endregion
+
+  // Allow the app to register a callback
+  onMessage(callback: (event: MessageEvent) => void) {
+    this.onMessageCallback = callback;
+  }
+
+  // Example method to post data to the worker
+  postMessage(message: any) {
+    this.worker.postMessage(message);
+  }
+
+  // Optional cleanup
+  terminate() {
+    this.worker.terminate();
+  }
+
 }
 
-export async function Me(): Promise<ApiResponse<Profile>> {
-  let result = <ApiResponse<Profile>>{}
-  let loading = false
 
-  loading = true
-  let response = await axios.post("http://10.90.24.52:3000/me");
-  console.log("response : ", response.data);
-  result.data = response.data;
-  result.isSuccess = response.status == 200;
-  result.status = response.status;
-  result.statusText = response.statusText;
-  return result;
-}
+
+
 

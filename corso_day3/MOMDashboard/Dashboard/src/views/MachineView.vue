@@ -5,12 +5,12 @@ import Content from '@/components/dashboard/Content.vue'
 import WorkOrderHeader from '@/components/WorkOrderHeader.vue'
 import { useRoute } from 'vue-router';
 import { onMounted, reactive, ref } from 'vue';
-import { GetWorkCenterSDAStatus, GetWorkCenterStatus } from 'momframeworkcorso3';
+// import { GetWorkCenterSDAStatus, GetWorkCenterStatus } from 'momframeworkcorso3';
 import type { WorkOrder } from 'momframeworkcorso3';
+import { KTEWorker } from 'momframeworkcorso3';
 
 const route = useRoute();
 const machineIds = <number[]>[]
-
 
 const workOrderHeader = ref(<WorkOrder>{});
 const nextOrderHeader = reactive(<WorkOrder>{});
@@ -18,84 +18,38 @@ const nextOrderHeader = reactive(<WorkOrder>{});
 const machineIdsOrigin = ref([3672, 3673]);
 const timeOut = 5000; // 5 seconds
 
-const worker = new Worker(new URL('./workers/Worker.js', import.meta.url), {
-  type: 'module'
-});
+const worker: KTEWorker = new KTEWorker();
 
 
-worker.onmessage = (e) => {
-  if (e.data.success) {
-    console.log('✅ API response:', e.data.data);
-  } else {
-    console.error('❌ API error:', e.data.error, 'Status:', e.data.status);
-  }
-};
+// // const randomId = Math.floor(Math.random() * (2 - 0 + 1)) + 0;
+//       Object.assign(workOrderHeader, data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader);
+//       // workOrderHeader.value = data.data.GetWorkCenterStatusResult[randomId].CurrentOrderHeader;
 
-// Esempio: GET request
-worker.postMessage({
-  url: 'https://jsonplaceholder.typicode.com/posts',
-  method: 'get'
-});
+//       Object.assign(nextOrderHeader, data.data.GetWorkCenterStatusResult[0].NextOrderHeader);
+
+
+
+
+// const prova = data.data.GetWorkCenterSDAStatusResult[0].SecondaryUnitIds;
+//       console.log('SDA Status:', prova);
 
 function GetWorkCenterStatusFunction() {
-  GetWorkCenterStatus(machineIds, timeOut).then((data) => {
-    console.time('GetWorkCenterStatus')
-    // Object.assign(workOrderHeader, data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader);
-    // workOrderHeader.value = data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader;
-    Object.assign(nextOrderHeader, data.data.GetWorkCenterStatusResult[0].NextOrderHeader);
 
-  }).catch((error) => {
-    console.error('Error fetching work center status:', error);
-  }).finally(() => {
-    console.timeEnd('GetWorkCenterStatus')
+  setInterval(() => {
+    console.time('GetWorkCenterStatus cycle')
 
-    setInterval(() => {
-      console.time('GetWorkCenterStatus cycle')
+    worker.GetWorkCenterStatus(machineIds, timeOut);
 
-      GetWorkCenterStatus(machineIds, timeOut).then((data) => {
-        // const randomId = Math.floor(Math.random() * (2 - 0 + 1)) + 0;
-        Object.assign(workOrderHeader, data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader);
-        // workOrderHeader.value = data.data.GetWorkCenterStatusResult[randomId].CurrentOrderHeader;
-
-        Object.assign(nextOrderHeader, data.data.GetWorkCenterStatusResult[0].NextOrderHeader);
-
-      }).catch((error) => {
-        console.error('Error fetching work center status:', error);
-      }).finally(() => {
-        console.timeEnd('GetWorkCenterStatus cycle')
-      });
-
-    }, timeOut + 500); // Fetch every 5 seconds
-  });
+  }, timeOut + 500);
 }
 
-
 function GetWorkCenterSDAStatusFunction() {
-  GetWorkCenterSDAStatus(machineIds, 2000).then((data) => {
-    console.time('GetWorkCenter SDA Status')
-    // Object.assign(workOrderHeader, data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader);
-    const prova = data.data.GetWorkCenterSDAStatusResult[0].SecondaryUnitIds;
-    console.log('SDA Status:', prova);
-  }).catch((error) => {
-    console.error('Error fetching work center status:', error);
-  }).finally(() => {
-    console.timeEnd('GetWorkCenter SDA Status')
+  setInterval(() => {
+    console.time('GetWorkCenter SDA Status cycle')
 
-    setInterval(() => {
-      console.time('GetWorkCenter SDA Status cycle')
+    worker.GetWorkCenterSDAStatus(machineIdsOrigin.value, 2000);
 
-      GetWorkCenterSDAStatus(machineIdsOrigin.value, 2000).then((data) => {
-        const prova = data.data.GetWorkCenterSDAStatusResult[0].SecondaryUnitIds;
-        console.log('SDA Status:', prova);
-
-      }).catch((error) => {
-        console.error('Error fetching work center status:', error);
-      }).finally(() => {
-        console.timeEnd('GetWorkCenter SDA Status cycle')
-      });
-
-    }, 2000 + 500); // Fetch every 5 seconds
-  });
+  }, 2000 + 500);
 }
 
 onMounted(() => {
@@ -104,17 +58,14 @@ onMounted(() => {
   console.log('Machine IDs:', machineIds);
   // Initialize the auth store or any other setup logic
 
-  worker.postMessage({
-    url: 'https://jsonplaceholder.typicode.com/posts',
-    method: 'post',
-    data: { title: 'foo', body: 'bar', userId: 1 }
+  GetWorkCenterStatusFunction()
+
+  GetWorkCenterSDAStatusFunction()
+  // worker.onMessageCallback = (data) => console.log('Worker message callback:', data);
+
+  worker.onMessage((data) => {
+    console.log('Worker message:', data)
   });
-
-
-
-  // GetWorkCenterStatusFunction()
-
-  // GetWorkCenterSDAStatusFunction()
 
 });
 

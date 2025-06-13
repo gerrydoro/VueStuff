@@ -2,10 +2,15 @@
 import axios from 'axios';
 
 self.onmessage = async (e) => {
-  const { url, method = 'get', data = null, headers = {} } = e.data;
+  const { action = '', url, method = 'get', data = null, headers = {} } = e.data;
   try {
-    const res = await axios({ url, method, data, headers });
-    self.postMessage({ success: true, data: res.data });
+    if (action === 'testMessage') {
+      self.postMessage({ success: true, message: 'Worker is running!' });
+    }
+    else {
+      const res = await axios({ url, method, data, headers });
+      self.postMessage({ success: true, data: res.data });
+    }
   } catch (err) {
     self.postMessage({
       success: false,
