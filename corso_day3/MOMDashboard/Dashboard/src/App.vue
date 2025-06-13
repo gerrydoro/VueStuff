@@ -4,7 +4,7 @@ import Skeleton from './components/Skeleton.vue'
 import { useAuthStore } from './stores/AuthStore';
 // import type { useRoute } from 'vue-router';
 
-const machineIds = ref([28712, 30388, 28737]);
+const machineIds = ref([28593, 30388, 28737]);
 
 </script>
 

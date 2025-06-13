@@ -240,13 +240,18 @@ export async function GetWorkCenterStatus(secondaryUnitIds: number[]): Promise<A
   loading = true
 
   let response = await axios.post("http://10.90.24.69/Secondary/GetWorkcenterStatus", params);
-  console.log("response : ", response.data);
+  // console.log("response : ", response.data);
+
   result.data = response.data;
   result.isSuccess = response.status == 200;
   result.status = response.status;
   result.statusText = response.statusText;
   return result;
 }
+
+
+
+
 //#endregion
 
 

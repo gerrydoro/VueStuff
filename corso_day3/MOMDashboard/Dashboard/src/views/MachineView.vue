@@ -4,7 +4,7 @@ import Template from '@/components/dashboard/Template.vue'
 import Content from '@/components/dashboard/Content.vue'
 import WorkOrderHeader from '@/components/WorkOrderHeader.vue'
 import { useRoute } from 'vue-router';
-import { onMounted, reactive } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { GetWorkCenterStatus } from 'momframeworkcorso3';
 import type { WorkOrder } from 'momframeworkcorso3';
 
@@ -12,26 +12,33 @@ const route = useRoute();
 const machineIds = <number[]>[]
 
 
-const workOrderHeader = reactive(<WorkOrder>{});
+const workOrderHeader = ref(<WorkOrder>{});
 const nextOrderHeader = reactive(<WorkOrder>{});
 
+const machineIdsOrigin = ref([28593, 30388, 28737]);
+
 onMounted(() => {
+  console.time('GetWorkCenterStatus')
   machineIds.push(Number(route.params.machineId));
   console.log('Machine IDs:', machineIds);
   // Initialize the auth store or any other setup logic
   GetWorkCenterStatus(machineIds).then((data) => {
 
-    Object.assign(workOrderHeader, data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader);
+    // Object.assign(workOrderHeader, data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader);
+    workOrderHeader.value = data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader;
     Object.assign(nextOrderHeader, data.data.GetWorkCenterStatusResult[0].NextOrderHeader);
+    console.timeEnd('GetWorkCenterStatus')
 
   }).catch((error) => {
     console.error('Error fetching work center status:', error);
   }).finally(() => {
     setInterval(() => {
 
-      GetWorkCenterStatus(machineIds).then((data) => {
-        console.log('first data:', data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader);
-        Object.assign(workOrderHeader, data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader);
+      GetWorkCenterStatus(machineIdsOrigin.value).then((data) => {
+        const randomId = Math.floor(Math.random() * (2 - 0 + 1)) + 0;
+        // Object.assign(workOrderHeader, data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader);
+        workOrderHeader.value = data.data.GetWorkCenterStatusResult[randomId].CurrentOrderHeader;
+
         Object.assign(nextOrderHeader, data.data.GetWorkCenterStatusResult[0].NextOrderHeader);
       }).catch((error) => {
         console.error('Error fetching work center status:', error);

@@ -2,22 +2,13 @@
 <script setup lang="ts">
 import { onMounted, onUpdated, ref } from 'vue';
 import KTEModal from '../modals/KTEModal.vue';
-import { useUserPrefsStore } from '@/stores/UserPrefsStore';
-import { GetWorkCenterStatus } from 'momframeworkcorso3'
 
 
 const isModalOpen = ref(false);
-
-const machineIds = ref([28712, 30388, 28737]);
 onMounted(() => {
   // This is where you can perform any setup logic when the component is mounted
   console.log('App mounted');
 
-  GetWorkCenterStatus(machineIds.value).then((data) => {
-    console.log(data);
-  }).catch((error) => {
-    console.error('Error fetching work center status:', error);
-  });
 
 });
 
