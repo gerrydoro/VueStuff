@@ -1,5 +1,6 @@
 import axios from "axios";
 
+
 // #region Models
 export interface Material {
   PatternDescription: string | null;
@@ -378,8 +379,9 @@ export class KTEWorker {
   onMessageCallback: (event: MessageEvent) => void = () => { };
 
   constructor() {
-    this.worker = new Worker(new URL("./workers/Worker.js", import.meta.url), { type: "module" });
+    this.worker = new Worker(new URL("/node_modules/momframeworkcorso3/src/workers/Worker.js", import.meta.url), { type: "module" });
 
+    console.log("KTEWorker constructor called, this worker is: ", this.worker);
     this.worker.onmessage = (event) => {
 
       this.onMessageCallback?.(event);
@@ -405,7 +407,14 @@ export class KTEWorker {
     // });
     // cancel the request
 
-    this.worker.postMessage({ action: 'testMessage', url : "url" });
+    // cancel the request
+    this.worker.postMessage({
+      action: 'GetWorkCenterStatus',
+      url: "http://10.90.24.69/Secondary/GetWorkcenterStatus",
+      method: 'POST',
+      data: params,
+      timeOut: timeOut
+    });
 
     // let response = await axios.post("http://10.90.24.69/Secondary/GetWorkcenterStatus", params,);
 
@@ -434,7 +443,13 @@ export class KTEWorker {
     }
     loading = true
     // cancel the request
-    this.worker.postMessage({ action: 'testMessage', url : "url" });
+    this.worker.postMessage({
+      action: 'GetWorkCenterSDAStatus',
+      url: "http://10.90.24.69/Secondary/GetWorkCenterSDAStatus",
+      method: 'POST',
+      data: params,
+      timeOut: timeOut
+    });
 
     // let response = await axios.post("http://10.90.24.69/Secondary/GetWorkCenterSDAStatus", params);
     // , {
