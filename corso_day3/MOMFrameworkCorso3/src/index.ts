@@ -203,6 +203,10 @@ export interface Machine {
   FGManagementInAlarm: boolean;
 }
 
+export interface GetWorkCenterStatusResult{
+  GetWorkCenterStatusResult: Machine[];
+}
+
 export interface Profile {
   id: number;
   username: string;
@@ -226,8 +230,8 @@ export interface ApiResponse<T> {
 
 //#region Funtions
 // 10.10.55.140
-export async function GetWorkCenterStatus(secondaryUnitIds: number[]): Promise<ApiResponse<Machine[]>> {
-  let result = <ApiResponse<Machine[]>>{}
+export async function GetWorkCenterStatus(secondaryUnitIds: number[]): Promise<ApiResponse<GetWorkCenterStatusResult>> {
+  let result = <ApiResponse<GetWorkCenterStatusResult>>{}
   let loading = false
   let params = {
     "secondaryUnitIds": secondaryUnitIds

@@ -15,7 +15,6 @@
 </template>
 <style scoped>
 .header {
-  padding: 1%;
   background-color: darkgray;
 }
 

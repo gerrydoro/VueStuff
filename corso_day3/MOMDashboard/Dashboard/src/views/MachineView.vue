@@ -11,24 +11,28 @@ import type { WorkOrder } from 'momframeworkcorso3';
 const route = useRoute();
 const machineIds = <number[]>[]
 
-let workOrderHeader = reactive(<WorkOrder>{});
+
+const workOrderHeader = reactive(<WorkOrder>{});
+const nextOrderHeader = reactive(<WorkOrder>{});
 
 onMounted(() => {
   machineIds.push(Number(route.params.machineId));
   console.log('Machine IDs:', machineIds);
   // Initialize the auth store or any other setup logic
   GetWorkCenterStatus(machineIds).then((data) => {
-    console.log('Work Center Status:', data);
+
+    Object.assign(workOrderHeader, data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader);
+    Object.assign(nextOrderHeader, data.data.GetWorkCenterStatusResult[0].NextOrderHeader);
+
   }).catch((error) => {
     console.error('Error fetching work center status:', error);
   }).finally(() => {
-    console.log('Work Center Status fetch completed');
     setInterval(() => {
 
       GetWorkCenterStatus(machineIds).then((data) => {
-        workOrderHeader = reactive(data.data[0].CurrentOrderHeader);
-
-        console.log('Work Center Status:', data);
+        console.log('first data:', data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader);
+        Object.assign(workOrderHeader, data.data.GetWorkCenterStatusResult[0].CurrentOrderHeader);
+        Object.assign(nextOrderHeader, data.data.GetWorkCenterStatusResult[0].NextOrderHeader);
       }).catch((error) => {
         console.error('Error fetching work center status:', error);
       });
@@ -43,7 +47,7 @@ onMounted(() => {
 <template>
   <Template>
     <template #header>
-      <WorkOrderHeader :orderHeader="workOrderHeader"></WorkOrderHeader>
+      <WorkOrderHeader :nextOrder="nextOrderHeader" :orderHeader="workOrderHeader"></WorkOrderHeader>
     </template>
     <template #auxiliary>
       <Auxilary></Auxilary>
